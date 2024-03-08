@@ -54,7 +54,6 @@ async function run() {
             const bookingData = req.body;
             const result = await bookingCollection.insertOne(bookingData);
             res.send(result);
-            console.log(bookingData);
         })
 
         // api to update room availability after booking a room
