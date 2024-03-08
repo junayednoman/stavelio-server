@@ -23,6 +23,7 @@ async function run() {
     try {
         // DB collections
         const roomCollection = client.db("stavelio").collection("rooms");
+        const bookingCollection = client.db("stavelio").collection("bookings");
 
         // api to get all the rooms
         app.get("/api/rooms", async (req, res) => {
@@ -48,8 +49,26 @@ async function run() {
             res.send(result);
         })
 
+        // api to post bookings
+        app.post("/api/bookings", async (req, res) => {
+            const bookingData = req.body;
+            const result = await bookingCollection.insertOne(bookingData);
+            res.send(result);
+            console.log(bookingData);
+        })
 
-        
+        // api to update room availability after booking a room
+        app.patch("/api/rooms/:id", async (req, res) => {
+            const filter = { _id: new ObjectId(req.params.id) }
+            const updateDoc = {
+                $set: req.body
+            }
+            const result = await roomCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        })
+
+
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
